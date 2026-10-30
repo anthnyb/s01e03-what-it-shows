@@ -4,7 +4,7 @@ title: '#4471 · three problems, not one'
 owner: Anthony Benites
 status: proposed
 reviewed: 2026-10-30
-signature: Anthony Benites
+signature: 'v1.eyJzdWIiOiIxMTU0MiIsImF1ZCI6ImNoYWxsZW5nZTp3aGF0LWl0LXNob3dzIiwiaWF0IjoxNzkzMzkxNjM4LCJleHAiOjE3OTM0NzgwMzh9.VSlZJoSwXdpgDLf_O_vrMIncoisZplyfRB-E4vfZMNY'
 ---
 
 <script>
