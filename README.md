@@ -34,3 +34,9 @@ Support desk. Decision records: whoever signed them.
 ---
 
 Exported 2026-10-04 from the `support` repo, `apps/kb/` → `src/`.
+
+## Running it
+
+`npm install`, then `npm run build` (static site in `build/`) or `npm run dev`.
+
+`desk-view/kb/incidents/4471-split.html` is the page [`src/routes/kb/incidents/4471-split/+page.svx`](src/routes/kb/incidents/4471-split/+page.svx) as the desk sees it, rendered by `npm run build`.
