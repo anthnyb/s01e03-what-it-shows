@@ -8,14 +8,13 @@
   // tickets: problem → link to the ticket filed for it.
   let { ticket, tickets }: { ticket: number; tickets: Partial<Record<Problem, string>> } = $props();
 
-  const groups = $derived(splitTicket(reports as Report[], ticket, tenantOf, notes.oneDayMove));
-  const total = $derived(groups.reduce((n, g) => n + g.reports.length, 0));
+  const split = $derived(splitTicket(reports as Report[], ticket, tenantOf, notes.oneDayMove));
 </script>
 
 <p class="sum">
-  <strong>{total}</strong> reports merged into #{ticket} ·
-  <strong>{groups.length}</strong>
-  {groups.length === 1 ? 'problem' : 'problems'}
+  <strong>{split.total}</strong> reports merged into #{ticket} ·
+  <strong>{split.rows.length}</strong>
+  {split.rows.length === 1 ? 'problem' : 'problems'}
 </p>
 
 <table>
@@ -23,15 +22,15 @@
     <tr><th>problem</th><th>reports</th><th>tenants</th><th>seen</th><th>ticket</th></tr>
   </thead>
   <tbody>
-    {#each groups as g (g.problem)}
+    {#each split.rows as row (row.problem)}
       <tr>
-        <td><code>{g.problem}</code><br /><span class="what">{g.problem === 'unplaced' ? 'No tenant on file.' : WHAT[g.problem]}</span></td>
-        <td>{g.reports.length}</td>
-        <td>{g.tenants}</td>
-        <td>{g.firstSeen} → {g.lastSeen}</td>
+        <td><code>{row.problem}</code><br /><span class="what">{row.problem === 'unplaced' ? 'No tenant on file.' : WHAT[row.problem]}</span></td>
+        <td>{row.reports}{row.filedUnder ? '*' : ''}</td>
+        <td>{row.tenants}</td>
+        <td>{row.firstSeen} → {row.lastSeen}</td>
         <td>
-          {#if g.problem !== 'unplaced' && tickets[g.problem]}
-            <a href={tickets[g.problem]}>{tickets[g.problem]?.replace(/^.*\/issues\//, 'GitHub #')}</a>
+          {#if row.problem !== 'unplaced' && tickets[row.problem]}
+            <a href={tickets[row.problem]}>{tickets[row.problem]?.replace(/^.*\/issues\//, 'GitHub #')}</a>
           {:else}
             none
           {/if}
@@ -41,7 +40,14 @@
   </tbody>
 </table>
 
+{#each split.rows as row (row.problem)}
+  {#if row.filedUnder}
+    <p class="note">* Counted where the desk files them, under <code>{row.filedUnder}</code>, as in the #{ticket} cause table.</p>
+  {/if}
+{/each}
+
 <style>
   .sum { font-size: 1.1rem; }
   .what { color: var(--muted); font-size: 0.85em; }
+  .note { color: var(--muted); font-size: 0.85em; }
 </style>

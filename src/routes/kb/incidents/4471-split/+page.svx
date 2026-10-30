@@ -42,7 +42,8 @@ others open.
 - **`shift`**: the date moves one day earlier, not a swap: "Tuesday 12 May" arrives as
   "Monday 11 May", a client in Lisbon gets Tuesday and a client in Toronto gets Monday. It
   depends on the recipient's time zone, not the tenant's date order. The desk noted these
-  reports as one-day moves, and the #4471 table still counts them under `parser`.
+  reports as one-day moves. Its #4471 table files them under `parser` by tenant, so they are
+  counted there too and footnoted.
 
 ## How the split was made
 
@@ -50,8 +51,8 @@ others open.
 - `parser` and `hint` come from `causeOf` in `#lib/kb/causes`: tenant locale, booking form and
   channel. Intake's tag is not used: it guesses from the reporter's browser, and it disagrees
   with the tenant often.
-- `shift` comes from the desk's own reading (`oneDayMove` in desk notes). Those reports are
-  taken out of `parser` because their dates do not swap.
+- `shift` comes from the desk's own reading (`oneDayMove` in desk notes). Their dates do not
+  swap, so they get their own ticket; the counts stay the desk's, as in the #4471 table.
 
 ## Why they were merged
 
