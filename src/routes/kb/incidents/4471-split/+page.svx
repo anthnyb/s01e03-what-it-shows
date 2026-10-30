@@ -1,0 +1,62 @@
+---
+layout: runbook
+title: '#4471 · three problems, not one'
+owner: Anthony Benites
+status: proposed
+reviewed: 2026-10-30
+signature: Anthony Benites
+---
+
+<script>
+  import ProblemTable from '#lib/kb/ProblemTable.svelte';
+  import Callout from '#lib/kb/Callout.svelte';
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
+</script>
+
+[#4471](/kb/incidents/4471) is marked known: one parser bug, one fix queued. Its reports say
+otherwise. Read by tenant, channel and body, they fall into separate problems, and the queued
+fix closes only one of them.
+
+<Callout kind="warn">
+Not one issue. Each problem below has its own ticket. Shipping the parser fix alone leaves the
+others open.
+</Callout>
+
+## The split
+
+<ProblemTable
+  ticket={4471}
+  tickets={{
+    parser: 'https://github.com/anthnyb/s01e03-what-it-shows/issues/1',
+    hint: 'https://github.com/anthnyb/s01e03-what-it-shows/issues/2',
+    shift: 'https://github.com/anthnyb/s01e03-what-it-shows/issues/3',
+  }}
+/>
+
+- **`parser`**: the shared parser reads every date month first. A day-first tenant's
+  7 April becomes 4 July. Every channel, every tenant. This is the fix that is queued.
+- **`hint`**: the booking-v3 form prints `MM/DD/YYYY` under its date field. Day-first tenants'
+  people type month first, as told, and the form reads the date day first. Only the `form`
+  channel on booking-v3 tenants. The parser fix does not touch it; the hint and the form's
+  reading have to agree with the tenant's locale.
+- **`shift`**: the date moves one day earlier, not a swap: "Tuesday 12 May" arrives as
+  "Monday 11 May", a client in Lisbon gets Tuesday and a client in Toronto gets Monday. It
+  depends on the recipient's time zone, not the tenant's date order. The desk noted these
+  reports as one-day moves, and the #4471 table still counts them under `parser`.
+
+## How the split was made
+
+- One id, one report: the export repeats some reports across pages, so they are counted once.
+- `parser` and `hint` come from `causeOf` in `#lib/kb/causes`: tenant locale, booking form and
+  channel. Intake's tag is not used: it guesses from the reporter's browser, and it disagrees
+  with the tenant often.
+- `shift` comes from the desk's own reading (`oneDayMove` in desk notes). Those reports are
+  taken out of `parser` because their dates do not swap.
+
+## Why they were merged
+
+[Decision 0001](/kb/decisions/0001-dedupe-by-subject) merges on subject line. Every one of
+these problems produces the same subjects: "wrong day", "date is wrong". Matching on subject
+could not tell them apart.
+
+<RenderStamp {signature} />
